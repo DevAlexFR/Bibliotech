@@ -1,0 +1,131 @@
+{% block content %}
+<div class="search-section">
+    <h1>🔍 Busca de Livros</h1>
+    
+    <form method="get" class="search-form">
+        <input type="text" name="q" placeholder="Digite título, autor ou ISBN..." 
+               value="{{ query }}" class="search-input">
+        <button type="submit" class="search-btn">Buscar</button>
+    </form>
+
+    <ul class="book-results">
+        {% for book in books %}
+            <li class="book-item">
+                <div class="book-info">
+                    <span class="book-title">{{ book.title }}</span>
+                    <span class="book-status {% if book.is_loaned %}loaned{% else %}available{% endif %}">
+                        {% if book.is_loaned %}⛔ Emprestado{% else %}✅ Disponível{% endif %}
+                    </span>
+                </div>
+                
+                {% if book.is_loaned %}
+                    <form method="post" action="{% url 'return_loan' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="title" value="{{ book.title }}">
+                        <button type="submit" class="action-btn return-btn">↩ Devolver</button>
+                    </form>
+                {% else %}
+                    <form method="post" action="{% url 'loan_book' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="title" value="{{ book.title }}">
+                        <button type="submit" class="action-btn loan-btn">📚 Emprestar (7 dias)</button>
+                    </form>
+                {% endif %}
+            </li>
+        {% empty %}
+            <li class="no-results">😞 Nenhum livro encontrado para "{{ query }}"</li>
+        {% endfor %}
+    </ul>
+
+    <div class="actions">
+        <a href="{% url 'index' %}" class="back-btn">← Voltar</a>
+    </div>
+</div>
+{% endblock %}
+
+<style>
+.search-section {
+    padding: 2rem;
+}
+
+.search-form {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.search-input {
+    flex: 1;
+    padding: 0.8rem;
+    border: 2px solid #bdc3c7;
+    border-radius: 8px;
+    font-size: 1rem;
+}
+
+.search-btn {
+    background-color: #3498db;
+    color: white;
+    padding: 0.8rem 2rem;
+}
+
+.book-results {
+    display: grid;
+    gap: 1rem;
+}
+
+.book-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+}
+
+.book-info {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.book-status {
+    font-size: 0.9rem;
+    padding: 0.3rem 0.6rem;
+    border-radius: 5px;
+}
+
+.book-status.loaned {
+    background-color: #e74c3c;
+    color: white;
+}
+
+.book-status.available {
+    background-color: #2ecc71;
+    color: white;
+}
+
+.action-btn {
+    font-weight: bold;
+    transition: transform 0.2s;
+}
+
+.loan-btn {
+    background-color: #2ecc71;
+    color: white !important;
+}
+
+.return-btn {
+    background-color: #e74c3c;
+    color: white !important;
+}
+
+.action-btn:hover {
+    transform: scale(1.05);
+}
+
+.no-results {
+    text-align: center;
+    padding: 2rem;
+    color: #95a5a6;
+}
+</style>

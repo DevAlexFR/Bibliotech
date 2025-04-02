@@ -1,0 +1,41 @@
+{% block content %}
+<div class="hero">
+    <h1>Bem-vindo ao Sistema de aluguel de Livros</h1>
+    <nav class="main-nav">
+        <ul>
+            <li><a href="{% url 'search_books' %}?q=" class="nav-btn">🔍 Buscar Livros</a></li>
+            <li><a href="{% url 'list_loans' %}" class="nav-btn">📚 Meus Livros alugados</a></li>
+        </ul>
+    </nav>
+</div>
+{% endblock %}
+
+<style>
+.hero {
+    text-align: center;
+    padding: 4rem 2rem;
+}
+
+.main-nav ul {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    margin-top: 3rem;
+}
+
+.nav-btn {
+    background-color: #3498db;
+    color: white !important;
+    padding: 1rem 2rem;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.nav-btn:hover {
+    background-color: #2980b9;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(52,152,219,0.3);
+}
+</style>

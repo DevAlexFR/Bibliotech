@@ -1,0 +1,82 @@
+{% block content %}
+<div class="loan-section">
+    <h1>📖 Meus Empréstimos Ativos</h1>
+    
+    <ul class="loan-list">
+        {% for loan in loans %}
+            <li class="loan-item">
+                <div class="loan-info">
+                    <span class="loan-id">#{{ loan.id }}</span>
+                    <span class="book-title">{{ loan.title }}</span>
+                    <span class="due-date">⏳ Vence: {{ loan.due_date }}</span>
+                </div>
+                <a href="{% url 'renew_loan' loan.id %}" class="renew-btn">🔄 Renovar</a>
+            </li>
+        {% empty %}
+            <li class="empty-loans">🎉 Você não possui empréstimos ativos!</li>
+        {% endfor %}
+    </ul>
+    
+    <div class="actions">
+        <a href="{% url 'index' %}" class="back-btn">← Voltar</a>
+    </div>
+</div>
+{% endblock %}
+
+<style>
+.loan-section {
+    padding: 2rem;
+}
+
+.loan-list {
+    display: grid;
+    gap: 1rem;
+}
+
+.loan-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    transition: transform 0.2s;
+}
+
+.loan-item:hover {
+    transform: translateX(10px);
+}
+
+.loan-info {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+}
+
+.loan-id {
+    color: #7f8c8d;
+    font-weight: bold;
+}
+
+.due-date {
+    color: #e67e22;
+    font-weight: 500;
+}
+
+.renew-btn {
+    background-color: #27ae60;
+    color: white !important;
+    padding: 0.5rem 1rem;
+}
+
+.renew-btn:hover {
+    background-color: #219a52;
+}
+
+.empty-loans {
+    text-align: center;
+    padding: 2rem;
+    color: #95a5a6;
+    font-size: 1.2rem;
+}
+</style>
