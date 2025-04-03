@@ -87,7 +87,7 @@ WSGI_APPLICATION = 'app.wsgi.application'
 
 
 
-# Database
+# Database para MY SQL
 
 # if os.getenv('FLY_APP_NAME'):
 # DATABASES = {
