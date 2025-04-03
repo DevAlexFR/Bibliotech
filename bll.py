@@ -2,11 +2,11 @@ import datetime
 import requests
 import datetime
 
-from db import add_loan, get_loans, update_loan
-from db import delete_loan_by_title
+from db import add_loan, get_loans, update_loan, delete_loan_by_id, delete_loan_by_title
+from time import sleep
 
 
-def create_loan(title):
+def create_loan(title:str) -> None:
     due_date = datetime.datetime.now() + datetime.timedelta(weeks=1)
     loan = {"title": title, "due_date": due_date, "id": None}
     add_loan(loan)
@@ -16,13 +16,14 @@ def list_loans():
     return get_loans()
 
 
-def renew_loan(loan_id):
+def renew_loan(loan_id:int=None) -> None:
     loans = get_loans()
 
     try:
         loan_id = int(loan_id)
     except ValueError:
         return
+    
     loan = next((l for l in loans if l["id"] == loan_id), None)
     if loan:
         new_due_date = datetime.datetime.now() + datetime.timedelta(weeks=1)
@@ -30,10 +31,11 @@ def renew_loan(loan_id):
         update_loan(loan)
 
 
-def fetch_books(query):
+def fetch_books(query:str) -> None:
     """Busca livros usando a API do Open Library."""
     url = f"http://openlibrary.org/search.json?q={query}"
-    response = requests.get(url)
+    sleep(1)
+    response = requests.get(url, verify=False, timeout=15)
     if response.status_code == 200:
         data = response.json()
         
@@ -58,5 +60,9 @@ def get_remaining_time(due_date):
     return f"{days}d {hours}h {minutes}m"
 
 
-def return_loan(title):
+def return_loan(title:str) -> None:
     delete_loan_by_title(title)
+
+
+def return_loan(loan_id:int) -> None:
+    delete_loan_by_id(loan_id)

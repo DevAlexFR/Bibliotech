@@ -10,7 +10,20 @@
                     <span class="book-title">{{ loan.title }}</span>
                     <span class="due-date">⏳ Vence: {{ loan.due_date }}</span>
                 </div>
-                <a href="{% url 'renew_loan' loan.id %}" class="renew-btn">🔄 Renovar</a>
+                <div class="loan-actions">
+                    <!-- Formulário separado para Renovação -->
+                    <form method="post" action="{% url 'renew_loan' loan.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="renew-btn">🔄 Renovar</button>
+                    </form>
+                    
+                    <!-- Formulário separado para Devolução -->
+                    <form method="post" action="{% url 'return_loan' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="loan_id" value="{{ loan.id }}">
+                        <button type="submit" class="return-btn">📥 Devolver</button>
+                    </form>
+                </div>
             </li>
         {% empty %}
             <li class="empty-loans">🎉 Você não possui empréstimos ativos!</li>
@@ -18,65 +31,238 @@
     </ul>
     
     <div class="actions">
-        <a href="{% url 'index' %}" class="back-btn">← Voltar</a>
+        <a href="{% url 'index' %}" class="back-btn">Voltar</a>
     </div>
 </div>
 {% endblock %}
 
 <style>
-.loan-section {
-    padding: 2rem;
-}
+    .loan-actions {
+        display: flex;
+        gap: 0.8rem;
+        align-items: center;
+        flex-shrink: 0; /* Impede que os botões encolham */
+    }
 
-.loan-list {
-    display: grid;
-    gap: 1rem;
-}
+    .renew-btn, 
+    .return-btn {
+        white-space: nowrap; /* Impede quebra de linha */
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
 
-.loan-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem;
-    background-color: #f8f9fa;
-    border-radius: 8px;
-    transition: transform 0.2s;
-}
+    @media (max-width: 768px) {
+        .loan-actions {
+            width: 100%;
+            justify-content: flex-end; /* Alinha à direita */
+        }
+    }
 
-.loan-item:hover {
-    transform: translateX(10px);
-}
+    @media (max-width: 480px) {
+        .loan-actions {
+            flex-direction: row; /* Mantém em linha mesmo em mobile */
+            justify-content: space-between;
+        }
+    }
+    :root {
+        --primary-color: #2c3e50;
+        --secondary-color: #34495e;
+        --accent-color: #e67e22;
+        --light-color: #ecf0f1;
+        --dark-color: #2c3e50;
+        --success-color: #2ecc71;
+        --warning-color: #e74c3c;
+    }
 
-.loan-info {
-    display: flex;
-    gap: 1.5rem;
-    align-items: center;
-}
+    body {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: #f0e6d3;
+        margin: 0;
+        padding: 20px;
+        font-family: 'Cormorant Garamond', serif;
+    }
 
-.loan-id {
-    color: #7f8c8d;
-    font-weight: bold;
-}
+    h1 {
+        color: #3d2b1f;
+        text-align: center;
+        margin-bottom: 2rem;
+        font-size: 2.5em;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+    }
 
-.due-date {
-    color: #e67e22;
-    font-weight: 500;
-}
+    .loan-list {
+        display: grid;
+        gap: 1rem;
+        max-width: 800px;
+        margin: 2rem auto;
+        width: 100%;
+    }
 
-.renew-btn {
-    background-color: #27ae60;
-    color: white !important;
-    padding: 0.5rem 1rem;
-}
+    .loan-item {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 10px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        animation: fadeIn 0.5s ease-in;
+        transition: transform 0.3s ease;
+    }
 
-.renew-btn:hover {
-    background-color: #219a52;
-}
+    .loan-item:hover {
+        transform: translateY(-3px);
+    }
 
-.empty-loans {
-    text-align: center;
-    padding: 2rem;
-    color: #95a5a6;
-    font-size: 1.2rem;
-}
+    .loan-info {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .loan-id {
+        font-size: 0.9em;
+        color: var(--secondary-color);
+    }
+
+    .book-title {
+        font-weight: 700;
+        font-size: 1.2em;
+    }
+
+    .due-date {
+        color: var(--warning-color);
+        font-weight: 500;
+    }
+
+    .loan-actions {
+        display: flex;
+        gap: 0.8rem;
+        align-items: center;
+    }
+
+    .renew-btn {
+        padding: 0.5rem 1rem;
+        background: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .return-btn {
+        padding: 0.5rem 1rem;
+        background: var(--warning-color);
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .renew-btn:hover {
+        background: var(--secondary-color);
+        transform: scale(1.05);
+    }
+
+    .return-btn:hover {
+        background: #c0392b;
+        transform: scale(1.05);
+    }
+
+    .empty-loans {
+        text-align: center;
+        padding: 2rem;
+        color: var(--secondary-color);
+        font-size: 1.2em;
+    }
+
+    .back-btn {
+        position: fixed;
+        bottom: 2rem;
+        left: 2rem;
+        padding: 0.8rem 1.5rem;
+        background-color: #3d2b1f;
+        color: #f0e6d3;
+        text-decoration: none;
+        border-radius: 25px;
+        font-family: 'Cormorant Garamond', serif;
+        font-weight: 600;
+        font-size: 1.1rem;
+        border: 2px solid #5a4634;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease-in-out;
+        letter-spacing: 0.5px;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        z-index: 100;
+    }
+
+    .back-btn:hover {
+        background-color: #5a4634;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    @media (max-width: 768px) {
+        .loan-item {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .loan-actions {
+            width: 100%;
+            justify-content: space-between;
+        }
+
+        .renew-btn,
+        .return-btn {
+            flex-grow: 1;
+            justify-content: center;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .loan-actions {
+            flex-direction: column;
+        }
+
+        .renew-btn,
+        .return-btn {
+            width: 100%;
+        }
+
+        .back-btn {
+            bottom: 1rem;
+            left: 1rem;
+            padding: 0.6rem 1.2rem;
+            font-size: 1rem;
+        }
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
 </style>

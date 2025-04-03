@@ -89,34 +89,39 @@ WSGI_APPLICATION = 'app.wsgi.application'
 
 # Database
 
-if os.getenv('FLY_APP_NAME'):
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.mysql',
-            'NAME': os.getenv('MYSQL_DATABASE', 'some_db'),
-            'USER': os.getenv('MYSQL_USER', 'non_root_user'),
-            'PASSWORD': os.getenv('MYSQL_PASSWORD', '1234'),
-            'HOST': os.getenv('MYSQL_HOST', 'bibliotech.internal'),
-            'PORT': os.getenv('MYSQL_PORT', '3306'),
-            'OPTIONS': {
-                'charset': 'utf8mb4',
-                'sql_mode': 'STRICT_TRANS_TABLES',
-            }
-        }
-    }
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.mysql',
-            'NAME': 'room',
-            'USER': 'root',
-            'PASSWORD': '1234',
-            'HOST': 'localhost',
-            'PORT': '3306',
-        }
-    }
+# if os.getenv('FLY_APP_NAME'):
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': os.getenv('MYSQL_DATABASE', 'some_db'),
+#         'USER': os.getenv('MYSQL_USER', 'non_root_user'),
+#         'PASSWORD': os.getenv('MYSQL_PASSWORD', '1234'),
+#         'HOST': os.getenv('MYSQL_HOST', 'bibliotech.internal'),
+#         'PORT': os.getenv('MYSQL_PORT', '3306'),
+#         'OPTIONS': {
+#             'charset': 'utf8mb4',
+#             'sql_mode': 'STRICT_TRANS_TABLES',
+#         }
+#     }
+# }
+# else:
+#     DATABASES = {
+#         'default': {
+#             'ENGINE': 'django.db.backends.mysql',
+#             'NAME': 'room',
+#             'USER': 'root',
+#             'PASSWORD': '1234',
+#             'HOST': 'localhost',
+#             'PORT': '3306',
+#         }
+#     }
 
-
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'localstorage.db',
+    }
+}
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [

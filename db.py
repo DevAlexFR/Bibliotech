@@ -1,97 +1,86 @@
 import datetime
-import subprocess
-import time
-import os
 
-from sqlalchemy import create_engine, Column, Integer, String, DateTime
-from sqlalchemy.orm import sessionmaker, declarative_base
+from dal_sqlite import SqliteDal
 
 
 
-Base = declarative_base()
+db = SqliteDal(db_name='bibliotech.db', db_folder='database')
 
-class Loan(Base):
-    __tablename__ = 'loans'
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    title = Column(String(255))
-    due_date = Column(DateTime)
-
-# Só inicia o proxy se não estiver no Fly.io
-
-engine = None
-Session = None
-session = None
-Base = declarative_base()
-
-if os.getenv('BUILDING') != 'true':
-    # Configurações locais
-    if not os.getenv('FLY_APP_NAME'):
-        try:
-            proxy_command = ["flyctl", "proxy", "13306:3306", "-a", "bibliotech"]
-            proxy_process = subprocess.Popen(
-                proxy_command,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                text=True
-            )
-            time.sleep(5)
-        except FileNotFoundError:
-            print("Aviso: flyctl não encontrado, usando configuração local direta")
-
-    # Configuração dinâmica do banco
-    DATABASE_URL = os.getenv('DATABASE_URL', 
-        "mysql+pymysql://non_root_user:1234@127.0.0.1:13306/some_db" if not os.getenv('FLY_APP_NAME') 
-        else "mysql+pymysql://non_root_user:1234@bibliotech.internal:3306/some_db"
+if not db.table_exists('loans'):
+    create_table_query = """
+    CREATE TABLE loans (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title TEXT NOT NULL,
+        due_date DATETIME NOT NULL
     )
-
-    engine = create_engine(DATABASE_URL, echo=False)
-    Session = sessionmaker(bind=engine)
-    session = Session()
-
-    # Cria tabelas apenas se explicitamente solicitado
-    if os.getenv('INIT_DB') == 'true':
-        Base.metadata.create_all(engine)
-
-def add_loan(loan_data):
-    new_loan = Loan(title=loan_data["title"], due_date=loan_data["due_date"])
-    session.add(new_loan)
-    session.commit()
+    """
+    db.run_query(create_table_query)
 
 
-def get_loans():
-    loans = session.query(Loan).all()
-    result = []
-    for l in loans:
-        result.append({
-            "id": l.id,
-            "title": l.title,
-            "due_date": l.due_date.isoformat() if l.due_date else None
-        })
-    return result
+def add_loan(loan_data: dict) -> None:
+    """ Aciona linha na tabela loans no caso adiciona um loan rs
+
+    Parameters
+    ----------
+    loan_data : dict
+        Dicionario com dados a ser inseridos
+    """
+    query = "INSERT INTO loans (title, due_date) VALUES (?, ?)"
+    parameters = (loan_data["title"], loan_data["due_date"].isoformat())
+    db.run_query(query, parameters)
 
 
-def update_loan(loan_data):
-    loan = session.query(Loan).filter(Loan.id == loan_data["id"]).first()
-    if loan:
-        loan.due_date = loan_data["due_date"]
-        session.commit()
+def get_loans() -> dict:
+    """ Faz a leitura da tabela loans
+
+    Returns
+    -------
+    dict
+        Retorna um dicionario com os dados da tabela loans
+    """
+    query = "SELECT id, title, due_date FROM loans"
+    result = db.run_query(query)
+    return [{
+        "id": row[0],
+        "title": row[1],
+        "due_date": datetime.datetime.fromisoformat(row[2])
+    } for row in result]
 
 
-def delete_loan_by_title(title):
-    session.query(Loan).filter(Loan.title == title).delete()
-    session.commit()
+def update_loan(loan_data:dict) -> None:
+    """ Atualiza a data da tabela loans
+
+    Parameters
+    ----------
+    loan_data : dict
+        Dicionario com nova data para atualizar na tabela loans
+    """
+    query = "UPDATE loans SET due_date = ? WHERE id = ?"
+    parameters = (loan_data["due_date"].isoformat(), loan_data["id"])
+    db.run_query(query, parameters)
 
 
-if __name__ == "__main__":
+def delete_loan_by_title(title:str) -> None:
+    """ Deleta um loan da tabela de acordo com a coluna title
 
-    from sqlalchemy import create_engine
+    Parameters
+    ----------
+    title : str
+        Titulo para poder filtrar no delete da linha
+    """
+    query = "DELETE FROM loans WHERE title = ?"
+    parameters = (title,)
+    db.run_query(query, parameters)
 
-    DATABASE_URL = "mysql+pymysql://non_root_user:1234@127.0.0.1:13306/some_db"
 
+def delete_loan_by_id(loan_id:int) -> None:
+    """ Deleta um loan da tabela de acordo com a coluna id
 
-    try:
-        engine = create_engine(DATABASE_URL)
-        with engine.connect() as conn:
-            print("✅ Conexão bem-sucedida!")
-    except Exception as e:
-        print(f"❌ Erro de conexão: {e}")
+    Parameters
+    ----------
+    loan_id : int
+        ID para poder filtrar no delete da linha
+    """
+    query = "DELETE FROM loans WHERE id = ?"
+    parameters = (loan_id,)
+    db.run_query(query, parameters)

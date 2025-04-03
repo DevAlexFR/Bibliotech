@@ -66,11 +66,11 @@ def renew_loan(request, loan_id):
 
 def return_loan(request):
     if request.method == 'POST':
-        title = request.POST.get('title')
-        if title:
-            bll.return_loan(title)
+        loan_id = request.POST.get('loan_id')
+        if loan_id:
+            bll.return_loan(loan_id)
             return redirect('list_loans')
-    return redirect('search_books')
+    return redirect('list_loans')
 
 
 

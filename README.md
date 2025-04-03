@@ -1,37 +1,58 @@
-# Bibliotech
-    Lib engine
+# 📚 Bibliotech - Sistema de Gerenciamento de Biblioteca
 
+[![Django](https://img.shields.io/badge/Django-092E20?style=for-the-badge&logo=django&logoColor=green)](https://www.djangoproject.com/)
+[![Python](https://img.shields.io/badge/Python-FFD43B?style=for-the-badge&logo=python&logoColor=blue)](https://www.python.org/)
+[![MySQL](https://img.shields.io/badge/MySQL-005C84?style=for-the-badge&logo=mysql&logoColor=white)](https://www.mysql.com/)
+[![Docker](https://img.shields.io/badge/Docker-2CA5E0?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
+[![Fly.io](https://img.shields.io/badge/Fly.io-7B2CBF?style=for-the-badge&logo=fly&logoColor=white)](https://fly.io/)
 
-    django-admin startproject app .
-    python manage.py migrate
-    python manage.py runserver
+Sistema de gerenciamento de biblioteca desenvolvido com Django para controle eficiente de empréstimos de livros.
 
+## ✨ Funcionalidades
 
-no MYSQL :
-CREATE DATABASE IF NOT EXISTS room;
-USE room;
+- 📖 Sistema de registro de empréstimos de livros
+- 🌐 Integração com API da OpenLibrary
+- 🔄 Suporte a múltiplos bancos de dados (SQLite/MySQL)
+	  por conta de acessos ao MySQL tive que optar pelo SQLite.
+- 🐳 Deploy containerizado com Docker
+- 📱 Interface web responsiva -> Desenvolvido por: https://github.com/vic-3PO
+- 🔄 Migrações automatizadas
 
+## 🛠️ Tecnologias Utilizadas
 
+| Categoria        | Tecnologias                                                                 |
+|------------------|-----------------------------------------------------------------------------|
+| **Backend**      | Python 3, Django                                                            |
+| **Frontend**     | HTML5, CSS3                                                                 |
+| **Banco de Dados** | SQLite (Desenvolvimento), MySQL (Produção)                                |
+| **APIs**         | OpenLibrary API                                                             |
+| **Deploy**       | Docker, Fly.io                                                              |
+| **ORM**          | SQLAlchemy                                                                  |
 
-flyctl proxy 13306:3306 -a bibliotech
+## 🚀 Primeiros Passos
 
+### Pré-requisitos
+- Python 3.9+
+- Docker (para containerização)
+- Fly.io CLI (para deploy) -> Neste caso somente eu para servir.
+- bibliotech-online.fly.dev -> Para acesso como user.
 
-Cadastro de empréstimo de livro - "como se fosse uma biblioteca"
+### Instalação
+```bash
+# Clonar repositório
+git clone https://github.com/seuusuario/bibliotech.git
+cd bibliotech
 
+# Criar ambiente virtual
+python -m venv venv
+venv\Scripts\activate
 
-Fontes utilizadas:
-	ChatGPT -> Para estrutura do código e estilização do README.md
-	Deepseek -> Para a configuração correta do docker e toml para o fly.io
-	stackoverflow -> Para duvidas sobre instalação do MySQL, validação de "rotas" endpoints Django.
+# Instalar dependências
+pip install -r requirements.txt
 
+# Configurar banco de dados
+python manage.py migrate
 
-Tecnologias utilizadas:
-	Python -> Back end, logica do projeto.
-	Django -> Framework web para endpoints.
-	HTML, CSS -> Estilização do front end.
-	MYSQL -> Banco de dados, criei um cloud em my sql no FLY.IO
-	sqlalchemy -> Utilizado para manipulação do banco e conexão.
-	Requests -> API "openlibrary" para ter insumo de títulos.
-	Docker -> Para configuração do deploy no fly.io
-	requirements -> Para listar as libs, e para o deploy funcionar corretamente ele e necessário na estrutura.
-    
+# Iniciar
+python manage.py runserver
+```
