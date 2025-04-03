@@ -15,7 +15,7 @@ Sistema de gerenciamento de biblioteca desenvolvido com Django para controle efi
 - 🔄 Suporte a múltiplos bancos de dados (SQLite/MySQL)
 	  por conta de acessos ao MySQL tive que optar pelo SQLite.
 - 🐳 Deploy containerizado com Docker
-- 📱 Interface web responsiva -> Desenvolvido por: https://github.com/vic-3PO
+- 📱 Interface web responsiva -> Front-end desenvolvido por: https://github.com/vic-3PO
 - 🔄 Migrações automatizadas
 
 ## 🛠️ Tecnologias Utilizadas
