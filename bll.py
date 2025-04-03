@@ -7,6 +7,13 @@ from time import sleep
 
 
 def create_loan(title:str) -> None:
+    """ Cria uma linha, loan na tabela loans
+
+    Parameters
+    ----------
+    title : str
+        Titulo do livro para criar na tabela a linha
+    """
     due_date = datetime.datetime.now() + datetime.timedelta(weeks=1)
     loan = {"title": title, "due_date": due_date, "id": None}
     add_loan(loan)
@@ -17,6 +24,13 @@ def list_loans():
 
 
 def renew_loan(loan_id:int=None) -> None:
+    """ Verifica se e um novo ou ja existe loan "linha" para inserir na tabela ou dar update
+
+    Parameters
+    ----------
+    loan_id : int, optional
+        ID da linha, by default None
+    """
     loans = get_loans()
 
     try:

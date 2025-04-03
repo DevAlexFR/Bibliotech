@@ -11,7 +11,7 @@ sys.path.insert(0, str(Path(__file__).parent.absolute().parent.absolute()))
 class SqliteDal:
     def __init__(
         self,
-        db_name: str = 'localstorage.db',
+        db_name: str = 'database/bibliotech.db',
         db_folder: str = '',
     ):
         self.db_path = str(Path(db_folder) / db_name)

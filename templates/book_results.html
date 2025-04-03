@@ -1,0 +1,26 @@
+{% for book in books %}
+    <li class="book-item">
+        <div class="book-info">
+            <span class="book-title">{{ book.title }}</span>
+            <span class="book-status {% if book.is_loaned %}loaned{% else %}available{% endif %}">
+                {% if book.is_loaned %}⛔ Emprestado{% else %}✅ Disponível{% endif %}
+            </span>
+        </div>
+        
+        {% if book.is_loaned %}
+            <form method="post" action="{% url 'return_loan' %}">
+                {% csrf_token %}
+                <input type="hidden" name="loan_id" value="{{ book.id }}">
+                <button type="submit" class="action-btn return-btn">📥 Devolver</button>
+            </form>
+        {% else %}
+            <form method="post" action="{% url 'loan_book' %}">
+                {% csrf_token %}
+                <input type="hidden" name="title" value="{{ book.title }}">
+                <button type="submit" class="action-btn loan-btn">📚 Emprestar (7 dias)</button>
+            </form>
+        {% endif %}
+    </li>
+{% empty %}
+    <li class="no-results">😞 Nenhum livro encontrado para "{{ query }}"</li>
+{% endfor %}
