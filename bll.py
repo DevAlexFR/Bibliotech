@@ -6,16 +6,10 @@ from db import add_loan, get_loans, update_loan, delete_loan_by_id, delete_loan_
 from time import sleep
 
 
-def create_loan(title:str) -> None:
-    """ Cria uma linha, loan na tabela loans
-
-    Parameters
-    ----------
-    title : str
-        Titulo do livro para criar na tabela a linha
-    """
+def create_loan(title: str, link: str) -> None:
+    """Cria um empréstimo com link do livro"""
     due_date = datetime.datetime.now() + datetime.timedelta(weeks=1)
-    loan = {"title": title, "due_date": due_date, "id": None}
+    loan = {"title": title, "due_date": due_date, "id": None, "link": link}
     add_loan(loan)
 
 
@@ -45,15 +39,35 @@ def renew_loan(loan_id:int=None) -> None:
         update_loan(loan)
 
 
-def fetch_books(query:str) -> None:
-    """Busca livros usando a API do Open Library."""
+def fetch_books(query: str) -> list:
+    """Busca livros usando a API do Open Library com links."""
     url = f"http://openlibrary.org/search.json?q={query}"
     sleep(1)
     response = requests.get(url, verify=False, timeout=15)
+    
     if response.status_code == 200:
         data = response.json()
+        books = []
         
-        books = [{"title": doc.get("title", "Sem título")} for doc in data.get("docs", [])[:10]]
+        for doc in data.get("docs", [])[:10]:
+            # Extrai identificadores para links
+            olid = doc.get("key", "").split("/")[-1]  # ID único do Open Library
+            ia_identifier = doc.get("ia", [""])[0]  # Identificador do Internet Archive
+            
+            # Monta os links
+            read_link = (
+                f"https://archive.org/details/{ia_identifier}" 
+                if ia_identifier 
+                else f"https://openlibrary.org/works/{olid}/read"
+            )
+            
+            books.append({
+                "title": doc.get("title", "Sem título"),
+                "author": doc.get("author_name", ["Desconhecido"])[0],
+                "link": read_link,
+                "year": doc.get("first_publish_year", "N/A")
+            })
+        
         return books
     else:
         return []

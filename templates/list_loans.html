@@ -6,8 +6,11 @@
         {% for loan in loans %}
             <li class="loan-item">
                 <div class="loan-info">
-                    <span class="loan-id">#{{ loan.id }}</span>
-                    <span class="book-title">{{ loan.title }}</span>
+                    <span class="book-title">
+                        <a href="{{ loan.link }}" target="_blank" class="book-link">
+                            {{ loan.title }}
+                        </a>
+                    </span>
                     <span class="due-date">⏳ Vence: {{ loan.due_date }}</span>
                 </div>
                 <div class="loan-actions">
@@ -37,6 +40,18 @@
 {% endblock %}
 
 <style>
+    .book-link {
+        color: #2c3e50;
+        text-decoration: none;
+        border-bottom: 2px solid #e67e22;
+        transition: all 0.3s ease;
+    }
+
+    .book-link:hover {
+        color: #e67e22;
+        border-bottom-color: transparent;
+    }
+    
     .loan-actions {
         display: flex;
         gap: 0.8rem;

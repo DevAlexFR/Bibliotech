@@ -11,7 +11,8 @@ if not db.table_exists('loans'):
     CREATE TABLE loans (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         title TEXT NOT NULL,
-        due_date DATETIME NOT NULL
+        due_date DATETIME NOT NULL,
+        link TEXT NOT NULL
     )
     """
     db.run_query(create_table_query)
@@ -25,8 +26,8 @@ def add_loan(loan_data: dict) -> None:
     loan_data : dict
         Dicionario com dados a ser inseridos
     """
-    query = "INSERT INTO loans (title, due_date) VALUES (?, ?)"
-    parameters = (loan_data["title"], loan_data["due_date"].isoformat())
+    query = "INSERT INTO loans (title, due_date, link) VALUES (?, ?, ?)"
+    parameters = (loan_data["title"], loan_data["due_date"].isoformat(), loan_data["link"])
     db.run_query(query, parameters)
 
 
@@ -38,12 +39,13 @@ def get_loans() -> dict:
     dict
         Retorna um dicionario com os dados da tabela loans
     """
-    query = "SELECT id, title, due_date FROM loans"
+    query = "SELECT id, title, due_date, link FROM loans"
     result = db.run_query(query)
     return [{
         "id": row[0],
         "title": row[1],
-        "due_date": datetime.datetime.fromisoformat(row[2])
+        "due_date": datetime.datetime.fromisoformat(row[2]),
+        "link": row[3]
     } for row in result]
 
 

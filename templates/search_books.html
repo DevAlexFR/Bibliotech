@@ -12,12 +12,20 @@
         {% for book in books %}
             <li class="book-item">
                 <div class="book-info">
-                    <span class="book-title">{{ book.title }}</span>
+                    <span class="book-title">
+                        <a href="{{ book.link }}" target="_blank" class="book-link">
+                            {{ book.title }}
+                        </a>
+                    </span>
+                    <span class="book-meta">
+                        {{ book.author }} ({{ book.year }})
+                    </span>
                     <span class="book-status {% if book.is_loaned %}loaned{% else %}available{% endif %}">
                         {% if book.is_loaned %}⛔ Emprestado{% else %}✅ Disponível{% endif %}
                     </span>
                 </div>
                 
+                <!-- Adicione um campo oculto para o link -->
                 {% if book.is_loaned %}
                     <form method="post" action="{% url 'return_loan' %}">
                         {% csrf_token %}
@@ -28,12 +36,11 @@
                     <form method="post" action="{% url 'loan_book' %}">
                         {% csrf_token %}
                         <input type="hidden" name="title" value="{{ book.title }}">
+                        <input type="hidden" name="link" value="{{ book.link }}">
                         <button type="submit" class="action-btn loan-btn">📚 Emprestar (7 dias)</button>
                     </form>
                 {% endif %}
             </li>
-        {% empty %}
-            <li class="no-results">😞 Nenhum livro encontrado para "{{ query }}"</li>
         {% endfor %}
     </ul>
 
@@ -44,6 +51,18 @@
 {% endblock %}
 
 <style>
+    .book-link {
+        color: #2c3e50;
+        text-decoration: none;
+        border-bottom: 2px solid #e67e22;
+        transition: all 0.3s ease;
+    }
+
+    .book-link:hover {
+        color: #e67e22;
+        border-bottom-color: transparent;
+    }
+
     :root {
         --primary-color: #2c3e50;
         --secondary-color: #34495e;

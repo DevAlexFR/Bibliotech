@@ -43,11 +43,12 @@ def search_books(request):
 
 
 def loan_book(request):
-    """View para criar um empréstimo de livro."""
+    """View para criar um empréstimo com link"""
     if request.method == 'POST':
         title = request.POST.get('title', '')
-        if title:
-            bll.create_loan(title)
+        link = request.POST.get('link', '')
+        if title and link:
+            bll.create_loan(title, link)
             return redirect('list_loans')
     return render(request, 'loan_book.html')
 
